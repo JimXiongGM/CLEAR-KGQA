@@ -1,0 +1,30 @@
+# tok len: 954
+# ID: WebQTest-1085_1cffc5c553afc1802970e8a6064cac32
+# Who dated the performer who headlined the concert tour called Demi World Tour?
+# PREFIX ns: <http://rdf.freebase.com/ns/>
+# SELECT DISTINCT ?x WHERE {
+#     ?e0 ns:type.object.name "Demi World Tour"@en .
+#     ?c ns:music.artist.concert_tours e0 . # 和 music.concert_tour.artist
+#     ?c ns:base.popstra.celebrity.dated ?y .
+#     ?y ns:base.popstra.dated.participant ?x .
+# }
+# ['Nicholas Braun', 'Joe Jonas', 'Cody Linley']
+
+Q: Who dated the performer who headlined the Demi World Tour?
+Thought: Let's first decouple this complex problem into several simple sub-problem triples: (a performer, headlined a concert tour, Demi World Tour), (a performer, dated, target people). According to my knowledge, the entity name of "Demi World Tour" in Freebase may be "Demi World Tour". Next, I need to search a node meaning "Demi World Tour".
+Action: SearchNodes("Demi World Tour")
+Observation: ['"Demi World Tour" | Description: The Demi World Tour was the fifth headlining concert tour by American singer Demi Lovato. It was Lov...', '"Demi-Tour" | No description.', '"Demi Lovato tours" | No description.']
+Thought: "Demi World Tour" may be the node I want. Next, I need to search for a predicate meaning "a person headlined a concert tour" in the sub-graph.
+Action: SearchGraphPatterns('SELECT ?e WHERE { ?e ns:type.object.name "Demi World Tour"@en }', semantic="a person headlined/topped the bill/lead act/star performer of a concert tour")
+Observation: [("Demi Lovato", music.artist.concert_tours, ?e), (?e, music.concert_tour.artist, "Demi Lovato"), ("Demi", music.album.supporting_tours, ?e), (?e, music.concert_tour.album_or_release_supporting, "Demi")]
+Thought: There are multiple predicates about "Demi World Tour", I should ask for clarification about which one is of interest.
+Action: AskForClarification("Which Demi Lovato do you want, the concert tour or the performer?")
+Clarification: I want the tour.
+Thought: "music.artist.concert_tours" is the predicates I want. Next, I need to search for a predicate meaning "dated" in the sub-graph.
+Action: SearchGraphPatterns('SELECT ?e WHERE { ?e0 ns:type.object.name "Demi World Tour"@en . ?e ns:music.artist.concert_tours ?e0 . }', semantic="dated")
+Observation: [(?e, people.person.date_of_birth, "1992-08-20"^^xsd:date), (?e, base.popstra.celebrity.dated -> base.popstra.dated.participant, "Joe Jonas"), ("2012 Teen Choice Awards", time.event.people_involved, ?e)]
+Thought: "base.popstra.celebrity.dated -> base.popstra.dated.participant" is the predicates I want. Now, I have all the information I need. I can construct the SPARQL query.
+Action: ExecuteSPARQL('SELECT DISTINCT ?x WHERE { ?e0 ns:type.object.name "Demi World Tour"@en . ?e0 ns:music.concert_tour.artist ?e . ?e ns:base.popstra.celebrity.dated ?c . ?c ns:base.popstra.dated.participant ?x . }')
+Observation: ['Nicholas Braun', 'Demi Lovato', 'Cody Linley', 'Joe Jonas']
+Thought: The observation is the answer I want.
+Action: Done.
