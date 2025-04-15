@@ -6,7 +6,7 @@ This repository contains the official code for IJCNN 2025 paper "CLEAR-KGQA: Cla
 <div align="center">
 
 [![IEEE Xplore](https://img.shields.io/badge/IEEE%20Xplore-TBC-blue)](TBC)
-[![arXiv](https://img.shields.io/badge/arXiv-xxx.xxx-darkred)](TBC)
+[![arXiv](https://img.shields.io/badge/arXiv-2504.09665-darkred)](https://arxiv.org/abs/2504.09665)
 
 </div>
 
